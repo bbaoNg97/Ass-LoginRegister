@@ -6,6 +6,7 @@
     <string name="login">Login</string>
     <string name="action_register">Register</string>
     <string name="dash">-</string>
-
-
+    <string name="reset">Reset</string>
+    <string name="insert_user_url">http://carloantracker.000webhostapp.com/Login/insert_user.php</string>
+    <string name="get_username_url">https://carloantracker.000webhostapp.com/Login/getUsername.php</string>
 </resources>
