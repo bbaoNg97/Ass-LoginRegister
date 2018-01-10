@@ -1,6 +1,5 @@
 package my.edu.tarc.loginregister;
 
-import android.app.DownloadManager;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AlertDialog;
@@ -9,7 +8,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -26,10 +24,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import my.edu.tarc.loginregister.Model.User;
 
 public class RegisterActivity extends AppCompatActivity {
     private EditText editTextFirstName, editTextLastName;
@@ -107,7 +106,7 @@ public class RegisterActivity extends AppCompatActivity {
         String hp = "";
         hp = editTextHp1.getText().toString() + editTextHp2.getText().toString();
         String dob = editTextDob.getText().toString();
-        //todo check doplicate username
+        //check duplicate username
         AlertDialog.Builder builder=new AlertDialog.Builder(RegisterActivity.this);
         if(foundUsername(username)){
             builder.setMessage("Username is exist. Please try another.").setNegativeButton("Retry",null).create().show();

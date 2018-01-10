@@ -36,10 +36,17 @@ public class LoginActivity extends AppCompatActivity {
     private EditText editTextUsername, editTextPassword;
     private Button buttonLogin;
     private TextView textViewRegister;
-    public static final String LASTNAME = "LastName";
     RequestQueue queue;
     private ProgressDialog pDialog;
-
+    public static final String FIRSTNAME = "first name";
+    public static final String LASTNAME = "last name";
+    public static final String NRIC = "ic";
+    public static final String DOB = "dob";
+    public static final String EMAIL = "email";
+    public static final String PHONENO = "phone No";
+    public static final double SALARY = 0;
+    public static final String USERNAME = "username";
+    public static final String PASSWORD = "password";
     public static final String TAG = "my.edu.tarc.LoginRegister";
 
 
@@ -53,14 +60,14 @@ public class LoginActivity extends AppCompatActivity {
         editTextPassword = (EditText) findViewById(R.id.editTextpassword);
         buttonLogin = (Button) findViewById(R.id.buttonLogin);
         textViewRegister = (TextView) findViewById(R.id.textViewRegister);
-         pDialog=new ProgressDialog(this);
+        pDialog = new ProgressDialog(this);
 
-            if (!isConnected()) {
-                AlertDialog.Builder builder=new AlertDialog.Builder(LoginActivity.this);
-                builder.setTitle("Connection Error");
-                builder.setMessage("No network.\nPlease try connect your network").setNegativeButton("Retry", null).create().show();
+        if (!isConnected()) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this);
+            builder.setTitle("Connection Error");
+            builder.setMessage("No network.\nPlease try connect your network").setNegativeButton("Retry", null).create().show();
 
-            }
+        }
 
 
         textViewRegister.setOnClickListener(new View.OnClickListener() {
@@ -89,18 +96,15 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void OnLogin() {
-
-
         //store username and pw to compare with database
         String username = editTextUsername.getText().toString();
         String password = editTextPassword.getText().toString();
 
-        //todo: compare username and password
         try {
-            if(!pDialog.isShowing())
+            if (!pDialog.isShowing())
                 pDialog.setMessage("Logging in...");
             pDialog.show();
-            makeServiceCall(this, getString(R.string.login_url), username,password);
+            makeServiceCall(this, getString(R.string.login_url), username, password);
         } catch (Exception e) {
             e.printStackTrace();
             Toast.makeText(getApplicationContext(), "Error : " + e.getMessage(), Toast.LENGTH_LONG).show();
@@ -125,19 +129,37 @@ public class LoginActivity extends AppCompatActivity {
                                     pDialog.dismiss();
 
                                 if (success) {
+                                    //get all data, because every activity have to use the data
+                                    String firstName = jsonObject.getString("firstName");
                                     String lastName = jsonObject.getString("lastName");
+                                    String IC = jsonObject.getString("IC");
+                                    String dob = jsonObject.getString("dob");
+                                    String email = jsonObject.getString("email");
+                                    String phoneNo = jsonObject.getString("phoneNo");
+                                    double salary = jsonObject.getDouble("salary");
+                                    String userName = jsonObject.getString("username");
+                                    String password = jsonObject.getString("password");
 
-                                    Intent MainIntent = new Intent(LoginActivity.this, MainActivity.class);
-                                    MainIntent.putExtra(LASTNAME, lastName);
-                                    LoginActivity.this.startActivity(MainIntent);
-                                }
-                                else {
-                                    AlertDialog.Builder builder=new AlertDialog.Builder(LoginActivity.this);
+                                    Intent profileIntent = new Intent(LoginActivity.this, EditProfileActivity.class);
+
+                                    //pass all these data to EditProfileActivity
+                                    profileIntent.putExtra(FIRSTNAME, firstName);
+                                    profileIntent.putExtra(LASTNAME, lastName);
+                                    profileIntent.putExtra(NRIC, IC);
+                                    profileIntent.putExtra(DOB, dob);
+                                    profileIntent.putExtra(EMAIL, email);
+                                    profileIntent.putExtra(PHONENO, phoneNo);
+                                   profileIntent.putExtra(SALARY,salary);
+                                    profileIntent.putExtra(PASSWORD, password);
+                                    profileIntent.putExtra(USERNAME, userName);
+
+                                    LoginActivity.this.startActivity(profileIntent);
+                                } else {
+                                    AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this);
                                     builder.setTitle("Invalid password or username");
-                                    builder.setMessage("Invalid password or username. Please try again.").setNegativeButton("Retry",null).create().show();
+                                    builder.setMessage("Invalid password or username. Please try again.").setNegativeButton("Retry", null).create().show();
                                 }
-                            }
-                            catch (JSONException e) {
+                            } catch (JSONException e) {
                                 e.printStackTrace();
                             }
                         }
@@ -146,18 +168,17 @@ public class LoginActivity extends AppCompatActivity {
                         @Override
                         public void onErrorResponse(VolleyError error) {
                             if (!isConnected()) {
-                                AlertDialog.Builder builder=new AlertDialog.Builder(LoginActivity.this);
+                                AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this);
                                 builder.setTitle("Connection Error");
                                 builder.setMessage("No network.\nPlease try connect your network").setNegativeButton("Retry", null).create().show();
 
-                            }else
+                            } else
                                 Toast.makeText(getApplicationContext(), "Error : " + error.toString(), Toast.LENGTH_LONG).show();
                             if (pDialog.isShowing())
                                 pDialog.dismiss();
 
                         }
-                    })
-            {
+                    }) {
                 @Override
                 protected Map<String, String> getParams() {
                     Map<String, String> params = new HashMap<>();
@@ -175,8 +196,7 @@ public class LoginActivity extends AppCompatActivity {
                 }
             };
             queue.add(postRequest);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

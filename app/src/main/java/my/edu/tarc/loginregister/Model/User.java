@@ -1,4 +1,4 @@
-package my.edu.tarc.loginregister;
+package my.edu.tarc.loginregister.Model;
 
 import java.util.Date;
 
@@ -14,7 +14,7 @@ public class User {
     private String phoneNo;
     private double salary;
     private String username,password;
-    //todo: declare image
+
 
     public User() {
     }
