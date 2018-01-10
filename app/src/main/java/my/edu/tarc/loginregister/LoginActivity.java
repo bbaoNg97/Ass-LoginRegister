@@ -2,6 +2,7 @@ package my.edu.tarc.loginregister;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -53,15 +54,13 @@ public class LoginActivity extends AppCompatActivity {
         buttonLogin = (Button) findViewById(R.id.buttonLogin);
         textViewRegister = (TextView) findViewById(R.id.textViewRegister);
          pDialog=new ProgressDialog(this);
-        AlertDialog.Builder builder=new AlertDialog.Builder(LoginActivity.this);
-        do{
-            if (!isConnected()) {
-                builder.setTitle("Connection Error");
-                builder.setMessage("\tNo network.\nPlease try connect your network").setNegativeButton("Retry",null).create().show();
 
+            if (!isConnected()) {
+                AlertDialog.Builder builder=new AlertDialog.Builder(LoginActivity.this);
+                builder.setTitle("Connection Error");
+                builder.setMessage("No network.\nPlease try connect your network").setNegativeButton("Retry", null).create().show();
 
             }
-        }while(isConnected());
 
 
         textViewRegister.setOnClickListener(new View.OnClickListener() {
@@ -90,6 +89,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void OnLogin() {
+
 
         //store username and pw to compare with database
         String username = editTextUsername.getText().toString();
@@ -133,6 +133,7 @@ public class LoginActivity extends AppCompatActivity {
                                 }
                                 else {
                                     AlertDialog.Builder builder=new AlertDialog.Builder(LoginActivity.this);
+                                    builder.setTitle("Invalid password or username");
                                     builder.setMessage("Invalid password or username. Please try again.").setNegativeButton("Retry",null).create().show();
                                 }
                             }
@@ -144,7 +145,13 @@ public class LoginActivity extends AppCompatActivity {
                     new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError error) {
-                            Toast.makeText(getApplicationContext(), "Error : " + error.toString(), Toast.LENGTH_LONG).show();
+                            if (!isConnected()) {
+                                AlertDialog.Builder builder=new AlertDialog.Builder(LoginActivity.this);
+                                builder.setTitle("Connection Error");
+                                builder.setMessage("No network.\nPlease try connect your network").setNegativeButton("Retry", null).create().show();
+
+                            }else
+                                Toast.makeText(getApplicationContext(), "Error : " + error.toString(), Toast.LENGTH_LONG).show();
                             if (pDialog.isShowing())
                                 pDialog.dismiss();
 
