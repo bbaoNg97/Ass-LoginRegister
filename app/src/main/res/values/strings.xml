@@ -8,5 +8,6 @@
     <string name="dash">-</string>
     <string name="reset">Reset</string>
     <string name="insert_user_url">http://carloantracker.000webhostapp.com/Login/insert_user.php</string>
-    <string name="get_username_url">https://carloantracker.000webhostapp.com/Login/getUsername.php</string>
+    <string name="get_user_url">https://carloantracker.000webhostapp.com/Login/get_user.php</string>
+    <string name="login_url">https://carloantracker.000webhostapp.com/Login/Login.php</string>
 </resources>

@@ -15,7 +15,7 @@ private TextView textViewUsername;
 
         textViewUsername=(TextView)findViewById(R.id.textViewFirstName);
         Intent intent=getIntent();
-        String name=intent.getStringExtra(LoginActivity.userName);
+        String name=intent.getStringExtra(LoginActivity.LASTNAME);
         textViewUsername.setText(name);
     }
 }

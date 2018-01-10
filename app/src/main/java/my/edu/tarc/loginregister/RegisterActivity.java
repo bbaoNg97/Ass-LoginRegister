@@ -1,7 +1,9 @@
 package my.edu.tarc.loginregister;
 
+import android.app.DownloadManager;
 import android.content.Context;
 import android.content.Intent;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -38,11 +40,11 @@ public class RegisterActivity extends AppCompatActivity {
     private EditText editTextSalary;
     private EditText editTextRegUsername, editTextRegPw, editTextConfirmPw;
     private Button buttonRegister;
-    private ImageButton imageButton;
     private static final int PICK_IMAGE_REQUEST = 1;
+    public static final String TAG = "my.edu.tarc.LoginRegister";
 
     RequestQueue queue;
-    List<User> usernameList;
+    List<String> usernameList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,19 +65,14 @@ public class RegisterActivity extends AppCompatActivity {
         editTextRegUsername = (EditText) findViewById(R.id.editTextRegUsername);
         editTextRegPw = (EditText) findViewById(R.id.editTextRegPw);
         editTextConfirmPw = (EditText) findViewById(R.id.editTextConfrimPw);
-        imageButton = (ImageButton) findViewById(R.id.imageButton);
         buttonRegister = (Button) findViewById(R.id.buttonRegister);
 
-        //redirect to gallery
-        imageButton.setOnClickListener(new View.OnClickListener() {
+        getAllUsername(getApplicationContext(), getString(R.string.get_user_url));
+
+        buttonRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent imageIntent = new Intent();
-                imageIntent.setType("image/*");
-                imageIntent.setAction(Intent.ACTION_GET_CONTENT);
-                startActivityForResult(Intent.createChooser(imageIntent, "Select Picture"), PICK_IMAGE_REQUEST);
-                //todo: select a photo
-                Toast.makeText(getApplicationContext(), "Salary slip is successfully added.", Toast.LENGTH_LONG).show();
+                OnRegister();
             }
         });
     }
@@ -96,9 +93,10 @@ public class RegisterActivity extends AppCompatActivity {
         editTextConfirmPw.setText("");
     }
 
-    public void OnRegister(View v) {
-        getUsername(getApplicationContext(), getString(R.string.get_username_url));
+    public void OnRegister() {
+
         User user = new User();
+        String username = editTextRegUsername.getText().toString();
         String password = editTextRegPw.getText().toString();
         String confirmPw = editTextConfirmPw.getText().toString();
         String firstName = editTextFirstName.getText().toString();
@@ -108,11 +106,17 @@ public class RegisterActivity extends AppCompatActivity {
         String email = editTextEmail.getText().toString();
         String hp = "";
         hp = editTextHp1.getText().toString() + editTextHp2.getText().toString();
-        String username = editTextRegUsername.getText().toString();
         String dob = editTextDob.getText().toString();
+        //todo check doplicate username
+        AlertDialog.Builder builder=new AlertDialog.Builder(RegisterActivity.this);
+        if(foundUsername(username)){
+            builder.setMessage("Username is exist. Please try another.").setNegativeButton("Retry",null).create().show();
 
-        if (!password.equals(confirmPw)) {
-            Toast.makeText(getApplicationContext(), "Error: Password must same with confirm password!", Toast.LENGTH_LONG).show();
+        }
+        else if (!password.equals(confirmPw)) {
+
+             builder.setMessage("Please make sure password is match with confirm password.").setNegativeButton("Retry",null).create().show();
+
         } else {
 
             user.setFirstName(firstName);
@@ -125,6 +129,7 @@ public class RegisterActivity extends AppCompatActivity {
             user.setUsername(username);
             user.setPassword(password);
 
+            //trying to call the service
             try {
                 makeServiceCall(this, getString(R.string.insert_user_url), user);
             } catch (Exception e) {
@@ -132,15 +137,14 @@ public class RegisterActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), "Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
             }
 
-            Intent LoginIntent = new Intent(RegisterActivity.this, LoginActivity.class);
-            startActivity(LoginIntent);
+
         }
 
 
     }
 
     public void makeServiceCall(Context context, String url, final User user) {
-        //mPostCommentResponse.requestStarted();
+
         RequestQueue queue = Volley.newRequestQueue(context);
 
         //Send data
@@ -156,9 +160,13 @@ public class RegisterActivity extends AppCompatActivity {
                                 jsonObject = new JSONObject(response);
                                 int success = jsonObject.getInt("success");
                                 String message = jsonObject.getString("message");
-                                if (success == 0) {
+                                if (success == 0) {//create successful
+                                    Intent LoginIntent = new Intent(RegisterActivity.this, LoginActivity.class);
+                                    RegisterActivity.this.startActivity(LoginIntent);
                                     Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
+
                                 } else {
+
                                     Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
                                     finish();
                                 }
@@ -172,7 +180,8 @@ public class RegisterActivity extends AppCompatActivity {
                         public void onErrorResponse(VolleyError error) {
                             Toast.makeText(getApplicationContext(), "Error. " + error.toString(), Toast.LENGTH_LONG).show();
                         }
-                    }) {
+                    })
+            {
                 @Override
                 protected Map<String, String> getParams() {
                     Map<String, String> params = new HashMap<>();
@@ -198,12 +207,13 @@ public class RegisterActivity extends AppCompatActivity {
                 }
             };
             queue.add(postRequest);
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private void getUsername(Context context, String url) {
+    private void getAllUsername(Context context, String url) {
         // Instantiate the RequestQueue
         queue = Volley.newRequestQueue(context);
 
@@ -216,17 +226,12 @@ public class RegisterActivity extends AppCompatActivity {
                             //everytime i listen to the server, i clear the list
                             usernameList.clear();
                             for (int i = 0; i < response.length(); i++) {
-                                JSONObject courseResponse = (JSONObject) response.get(i);
-                                //jason object that contains code,title,credit
-                                String username = courseResponse.getString("username");
-                                String title = courseResponse.getString("title");
-                                String credit = courseResponse.getString("credit");
-                                Course course = new Course(code, title, credit);
-                                caList.add(course);
+                                JSONObject userResponse = (JSONObject) response.get(i);
+                                //json object that contains all of the username in the user table
+                                String username = userResponse.getString("username");
+                                usernameList.add(username);
                             }
-                            loadCourse();
-                            if (pDialog.isShowing())
-                                pDialog.dismiss();
+
                         } catch (Exception e) {
                             Toast.makeText(getApplicationContext(), "Error:" + e.getMessage(), Toast.LENGTH_LONG).show();
                         }
@@ -236,8 +241,7 @@ public class RegisterActivity extends AppCompatActivity {
                     @Override
                     public void onErrorResponse(VolleyError volleyError) {
                         Toast.makeText(getApplicationContext(), "Error" + volleyError.getMessage(), Toast.LENGTH_LONG).show();
-                        if (pDialog.isShowing())
-                            pDialog.dismiss();
+
                     }
                 });
 
@@ -247,4 +251,26 @@ public class RegisterActivity extends AppCompatActivity {
         // Add the request to the RequestQueue.
         queue.add(jsonObjectRequest);
     }
+
+    @Override
+    protected void onPause() {
+        //if user pause the activity, must clear the queue
+        super.onPause();
+        if (queue != null) {
+            queue.cancelAll(TAG);
+        }
+    }
+
+    public boolean foundUsername(String username) {
+        //check whether the username exist or not
+        boolean found=false;
+        for (int i = 0; i < usernameList.size(); ++i) {
+            if (usernameList.get(i).equals(username)) {
+                found=true;
+
+            }
+        }
+        return found;
+    }
+
 }
