@@ -44,7 +44,7 @@ public class LoginActivity extends AppCompatActivity {
     public static final String DOB = "dob";
     public static final String EMAIL = "email";
     public static final String PHONENO = "phone No";
-    public static final double SALARY = 0;
+    public static final String SALARY = "salary";
     public static final String USERNAME = "username";
     public static final String PASSWORD = "password";
     public static final String TAG = "my.edu.tarc.LoginRegister";
