@@ -17,4 +17,6 @@
     <string name="old_password">Old Password</string>
     <string name="new_password">New Password</string>
     <string name="new_confirmPw">Confirm Password</string>
+    <string name="changePW_url">https://carloantracker.000webhostapp.com/Login/update_password.php</string>
+    <string name="updateProfile_url">https://carloantracker.000webhostapp.com/Login/update_profile.php</string>
 </resources>

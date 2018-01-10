@@ -101,10 +101,10 @@ public class RegisterActivity extends AppCompatActivity {
         String firstName = editTextFirstName.getText().toString();
         String lastName = editTextLastName.getText().toString();
         String nric = "";
-        nric = editTextIC1.getText().toString() + editTextIC2.getText().toString() + editTextIC3.getText().toString();
+        nric = editTextIC1.getText().toString() +"-"+ editTextIC2.getText().toString()+"-" + editTextIC3.getText().toString();
         String email = editTextEmail.getText().toString();
         String hp = "";
-        hp = editTextHp1.getText().toString() + editTextHp2.getText().toString();
+        hp = editTextHp1.getText().toString()+"-" + editTextHp2.getText().toString();
         String dob = editTextDob.getText().toString();
         //check duplicate username
         AlertDialog.Builder builder=new AlertDialog.Builder(RegisterActivity.this);
