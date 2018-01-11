@@ -1,12 +1,17 @@
 package my.edu.tarc.loginregister;
 
+import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -24,6 +29,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -42,6 +48,9 @@ public class RegisterActivity extends AppCompatActivity {
     private static final int PICK_IMAGE_REQUEST = 1;
     public static final String TAG = "my.edu.tarc.LoginRegister";
 
+    //todo:here
+    private DatePickerDialog.OnDateSetListener mDateSetListener;
+
     RequestQueue queue;
     List<String> usernameList;
 
@@ -57,6 +66,39 @@ public class RegisterActivity extends AppCompatActivity {
         editTextIC2 = (EditText) findViewById(R.id.editTextIC2);
         editTextIC3 = (EditText) findViewById(R.id.editTextIC3);
         editTextDob = (EditText) findViewById(R.id.editTextDoB);
+
+        //todo: change to date
+        /*
+        editTextDob.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Calendar cal=Calendar.getInstance();
+                int year = cal.get(Calendar.YEAR);
+                int month = cal.get(Calendar.MONTH);
+                int day = cal.get(Calendar.DAY_OF_MONTH);
+
+                DatePickerDialog dialog = new DatePickerDialog(
+                        RegisterActivity.this,
+                        android.R.style.Theme_Holo_Light_Dialog_MinWidth,
+                        mDateSetListener,
+                        year,month,day);
+                dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                dialog.show();
+
+            }
+        });
+
+        mDateSetListener = new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker datePicker, int year, int month, int day) {
+                month = month + 1;
+                //Log.d(TAG, "onDateSet: mm/dd/yyy: " + month + "/" + day + "/" + year);
+
+                String date = year + "/" + month + "/" + day;
+                editTextDob.setText(date);
+            }
+        };
+        */
         editTextEmail = (EditText) findViewById(R.id.editTextEmail);
         editTextHp1 = (EditText) findViewById(R.id.editTextHp1);
         editTextHp2 = (EditText) findViewById(R.id.editTextHp2);
